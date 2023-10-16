@@ -1,133 +1,221 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-const apiUrl = 'http://localhost:4000/api/task';
+const url = 'http://localhost:4000/api/task';
 
 export const Semana1 = () => {
-  const [tasks, setTasks] = useState([]);
-  const [taskForm, setTaskForm] = useState({
-    nombre: '',
-    edad: '',
-    fecha_ingreso: '',
-    finish: false
+
+
+
+  const [boolEdit, setBoolEdit] = useState(false);
+  const [idEdit, setIdeEdit] = useState(0);
+
+  const [dataForm, setDataForm] = useState({
+    nombre: "",
+    edad: "0",
+    fecha_ingreso: "",
+    finish: false,
+
   });
 
-  useEffect(() => {
-    getDataTask();
-  }, []);
 
-  const getDataTask = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/api/task`);
-      const data = await response.json();
-      setTasks(data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  const createTask = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/api/task`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(taskForm),
-      });
-
-      const data = await response.json();
-      console.log('Created task:', data);
-
-      // Refresh task data
-      getDataTask();
-    } catch (error) {
-      console.error('Error creating task:', error);
-    }
-  };
 
   const formChange = (event) => {
     const { name, value } = event.target;
-    setTaskForm((prevForm) => ({ ...prevForm, [name]: value }));
+    setDataForm(previo => ({ ...previo, [name]: value }));
   };
 
-  const formSubmit = (event) => {
+  const formSubmit = async (event) => {
     event.preventDefault();
-    
-    createTask();
-    setTaskForm({
-      nombre: '',
-      edad: '',
-      fecha_ingreso: '',
+
+    if (boolEdit) {
+
+      await editData();
+    } else {
+      await createData();
+    }
+
+
+    setDataForm({
+      nombre: "",
+      edad: "0",
+      fecha_ingreso: "",
       finish: false
     });
+    setBoolEdit(false);
+    setIdeEdit(0);
+    getDataTask();
   };
+  // Informacion de el reporte
+
+  const [getTasks, setTasks] = useState([]);
+
+  const getDataTask = async () => {
+    const result = await fetch(url);
+    const resultData = await result.json();
+    setTasks(resultData);
+    console.log(result);//para observar lo que pasa
+
+
+  }
+
+  //crear 
+  const createData = async () => {
+    const result = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(dataForm),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const resultJson = await result.json();
+    console.log(resultJson);
+
+  }
+
+  //delete para eliminar datos
+  const deleteData = async (id = 0) => {
+    const result = await fetch(url + "/" + id, {
+      method: "DELETE"
+
+    });
+    const resultData = await result.json();
+    getDataTask();
+
+  }
+
+  useEffect(() => {
+
+    getDataTask();
+  }, []
+
+  )
+
+  //Edit para editar los datos 
+
+  const setDataFormEdit = (task) => {
+    setBoolEdit(true);
+    setIdeEdit(task.id);
+    setDataForm({
+
+      name: task.name,
+      description: task.description,
+      finish: task.finish
+    });
+  }
+
+  const editData = async (task) => {
+    try {
+      const result = await fetch(url, {
+        method: "PUT",
+        body: JSON.stringify(task),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const resultData = await result.json();
+      console.log(resultData);
+      getDataTask();
+    } catch (error) {
+      console.error('Error editing data:', error);
+    }
+  }
+
+  //finish
+  const finishTask = (id) => {
+    console.log(id);
+  }
 
   return (
     <div className="container">
-      <h1>REGISTRO PERSONAL</h1>
       <form onSubmit={formSubmit}>
-        <div className="mb-3">
-          <label htmlFor="nombre" className="form-label">
-            NOMBRE
-          </label>
+        <h1>REGISTRO DE EL PERSONAL</h1>
+        <div className="form-floating mb-3">
           <input
             type="text"
             className="form-control"
-            id="nombre"
+            placeholder="Nombre"
+            value={dataForm.nombre}
             name="nombre"
-            value={taskForm.nombre}
             onChange={formChange}
-            required
           />
+          <label htmlFor="floatingInput">Nombre</label>
         </div>
-        <div className="mb-3">
-          <label htmlFor="edad" className="form-label">
-            EDAD
-          </label>
+
+        <div className="form-floating mb-3">
           <input
             type="number"
             className="form-control"
-            id="edad"
+            placeholder="Edad"
+            value={dataForm.edad}
             name="edad"
-            value={taskForm.edad}
             onChange={formChange}
-            required
           />
+          <label htmlFor="floatingPassword">Edad</label>
         </div>
-        <div className="mb-3">
-          <label htmlFor="fecha_ingreso" className="form-label">
-            FECHA  DE INGRESO
-          </label>
+
+        <div className="form-floating md-3">
           <input
             type="date"
             className="form-control"
-            id="fecha_ingreso"
+            placeholder="Fecha"
+            value={dataForm.fecha_ingreso}
             name="fecha_ingreso"
-            value={taskForm.fecha_ingreso}
             onChange={formChange}
-            required
           />
+          <label htmlFor="floatingPassword">Fecha</label>
         </div>
-        <button type="submit" className="btn btn-primary mb-3">
-          Crear
-        </button>
+        <td></td>
+        <button type="submit" className="btn btn-primary">
+          {boolEdit ? 'Edit' : 'Create'} </button>
       </form>
-      {/* Render your task list */}
-      <h2>LISTADO </h2>
-      <table className="table">
+      <h2>Listado</h2>
+      <table className="table table-dark table-hover">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Edad</th>
-            <th>Fecha de ingreso</th>
+            <td>Id</td>
+            <td>Nombre</td>
+            <td>Edad</td>
+            <td>Fecha</td>
+            <td>Finish</td>
+            <td colSpan={3}>Actions</td>
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.nombre}</td>
-              <td>{task.edad}</td>
-              <td>{task.fecha_ingreso}</td>
+          {getTasks.map((x) => (
+            <tr key={x.id}>
+              <td>{x.id}</td>
+              <td>{x.nombre}</td>
+              <td>{x.edad}</td>
+              <td>{x.fecha_ingreso}</td>
+              <td>{x.finish ? "Yes" : "No"}</td>
+              <td>
+                <button
+                  type="button"
+                  className="btn btn-outline-warning"
+                  onClick={() => editData(x)}
+                >
+                  Edit
+                </button>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  className="btn btn-outline-success"
+                  onClick={() => finishTask(x.id)}
+                >
+                  Finish
+                </button>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={() => deleteData(x.id)}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
