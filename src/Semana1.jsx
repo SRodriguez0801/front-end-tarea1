@@ -13,11 +13,7 @@ export const Semana1 = () => {
     nombre: "",
     edad: "0",
     fecha_ingreso: "",
-    finish: false,
-
   });
-
-
 
   const formChange = (event) => {
     const { name, value } = event.target;
@@ -39,7 +35,6 @@ export const Semana1 = () => {
       nombre: "",
       edad: "0",
       fecha_ingreso: "",
-      finish: false
     });
     setBoolEdit(false);
     setIdeEdit(0);
@@ -98,9 +93,9 @@ export const Semana1 = () => {
     setIdeEdit(task.id);
     setDataForm({
 
-      name: task.name,
-      description: task.description,
-      finish: task.finish
+      nombre: task.nombre,
+      edad: task.edad,
+      fecha_ingreso: task.fecha_ingreso
     });
   }
 
@@ -119,11 +114,6 @@ export const Semana1 = () => {
     } catch (error) {
       console.error('Error editing data:', error);
     }
-  }
-
-  //finish
-  const finishTask = (id) => {
-    console.log(id);
   }
 
   return (
@@ -165,7 +155,6 @@ export const Semana1 = () => {
           />
           <label htmlFor="floatingPassword">Fecha</label>
         </div>
-        <td></td>
         <button type="submit" className="btn btn-primary">
           {boolEdit ? 'Edit' : 'Create'} </button>
       </form>
@@ -177,8 +166,7 @@ export const Semana1 = () => {
             <td>Nombre</td>
             <td>Edad</td>
             <td>Fecha</td>
-            <td>Finish</td>
-            <td colSpan={3}>Actions</td>
+            <td colSpan={4}>Actions</td>
           </tr>
         </thead>
         <tbody>
@@ -188,24 +176,16 @@ export const Semana1 = () => {
               <td>{x.nombre}</td>
               <td>{x.edad}</td>
               <td>{x.fecha_ingreso}</td>
-              <td>{x.finish ? "Yes" : "No"}</td>
               <td>
                 <button
                   type="button"
                   className="btn btn-outline-warning"
-                  onClick={() => editData(x)}
+                  onClick={() => setDataFormEdit(x)}
                 >
                   Edit
                 </button>
               </td>
               <td>
-                <button
-                  type="button"
-                  className="btn btn-outline-success"
-                  onClick={() => finishTask(x.id)}
-                >
-                  Finish
-                </button>
               </td>
               <td>
                 <button
