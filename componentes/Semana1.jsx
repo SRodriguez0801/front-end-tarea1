@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { Link } from 'react-router-dom';
 const url = 'http://localhost:4000/api/task';
 
 export const Semana1 = () => {
@@ -116,6 +116,10 @@ export const Semana1 = () => {
     }
   }
 
+  const Menu = ()=>{
+    navigate('/Menu');
+}
+
   return (
     <div className="container">
       <form onSubmit={formSubmit}>
@@ -194,12 +198,16 @@ export const Semana1 = () => {
                   onClick={() => deleteData(x.id)}
                 >
                   Delete
+
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+
+      <Link to="/Menu">Menu</Link>
     </div>
   );
 };
