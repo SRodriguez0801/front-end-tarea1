@@ -1,0 +1,27 @@
+/* Estilos para pantallas pequeñas (móviles) */
+@media (max-width: 767px) {
+    /* Estilos específicos para móviles */
+}
+
+/* Estilos para pantallas medianas (tabletas) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    /* Estilos específicos para tabletas */
+}
+
+/* Estilos para pantallas grandes (escritorios) */
+@media (min-width: 1024px) {
+    /* Estilos específicos para escritorios */
+}
+.container {
+    width: 100%;
+    max-width: 1200px; /* Ejemplo de ancho máximo para un diseño amplio */
+}
+
+h1 {
+    font-size: 2rem; /* Tamaño de fuente relativo */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
